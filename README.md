@@ -168,6 +168,8 @@ The script generates the following directory structure:
         - **Templates**: Directory for storing Terraform template files.
 - **Files**: Directory for storing miscellaneous files.
 
+## Directory Structure
+
 ```markdown
 |-- terraform-projects
     |-- .gitignore
