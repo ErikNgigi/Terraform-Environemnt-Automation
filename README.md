@@ -77,6 +77,8 @@ Upon execution, the script sets up a Terraform project structure with directorie
 - **Terraform Initialization**: Offers to run `terraform init` in the new directory.
 - **`.gitignore` File Creation**: Proposes to create a `.gitignore` file tailored for Terraform projects.
 
+## To-Do List
+
 ### Feature Enhancements
 
 - [ ] **Cross-Platform Compatibility**: Adapt the script for compatibility with other operating systems, such as macOS and Windows, ensuring a broader user base can utilize it.
