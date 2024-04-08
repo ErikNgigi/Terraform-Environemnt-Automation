@@ -1,376 +1,120 @@
-# Terraform Decoded: Automating Your Setup Environment for Efficiency
+# Terraform Decoded Script Documentation
 
-This shell script is designed to create a specific directory structure for managing infrastructure code, specifically tailored for projects utilizing Terraform for infrastructure provisioning. The script prompts the user to create a root directory and then generates the required directories and files within it. Below is an explanation of its functionality:
+The Terraform Decoded script automates the setup of a modular and efficient Terraform development environment. It's designed to simplify the creation of a structured Terraform project, handling Terraform initialization, `.gitignore` file creation, and AWS CLI profile selection.
 
-## Directory Structure
+## Features
 
-``````
-Automated Directory Creation: tf-start.sh
-``````
+- **Automated Directory Structure**: Creates a well-organized directory structure for Terraform projects.
+- **AWS Profile Integration**: Enables the selection of an AWS CLI profile for Terraform configurations, simplifying AWS resource management.
+- **Terraform Initialization**: Provides an option to automatically run `terraform init`.
+- **Gitignore Initialization**: Generates a `.gitignore` file tailored for Terraform projects to exclude sensitive or unnecessary files from version control.
+
+[![terraform-decode-video](https://img.youtube.com/vi/o-m9IG4_7E8/maxresdefault.jpg)](https://youtu.be/o-m9IG4_7E8)
+
+## Prerequisites
+
+Before running the script, ensure the following requirements are met:
+
+- **Operating System**: Linux. The script uses bash syntax and Linux-specific commands which may not be compatible with other operating systems.
+- **AWS CLI**: Installed and configured with at least one profile. This is necessary for the script to allow AWS profile selection for Terraform configurations.
+- **Terraform**: Installed locally. The script expects Terraform to be available for initializing directories and setting up configurations.
+- **Bash Environment**: The script is a Bash script and requires a Bash shell to run.
+
+## Installation
+
+No specific installation is required for the script itself. However, make sure you have the necessary permissions to execute it:
 
 ```bash
-#!/bin/bash
-
-# Function to create directory structure
-create_directory_structure() {
-    # Create Documentation directory
-    mkdir -p "$1/documentation"
-    
-    # Create Environment directory
-    # mkdir -p "$1/environment/development"
-    # mkdir -p "$1/environment/staging"
-    # mkdir -p "$1/environment/production"
-
-    # Create infrastructure directory
-    mkdir -p "$1/infrastructure/modules"
-    
-    # Create Media directory 
-    mkdir -p "$1/files"
-
-    # Create modules subdirectories
-    mkdir -p "$1/infrastructure/modules/containers"
-    mkdir -p "$1/infrastructure/modules/instances"
-    mkdir -p "$1/infrastructure/modules/database"
-    mkdir -p "$1/infrastructure/modules/management"
-    mkdir -p "$1/infrastructure/modules/network"
-    mkdir -p "$1/infrastructure/modules/notifications"
-    mkdir -p "$1/infrastructure/modules/scaling"
-    mkdir -p "$1/infrastructure/modules/security"
-    mkdir -p "$1/infrastructure/modules/storage"
-
-    # Create templates subdirectories
-    mkdir -p "$1/infrastructure/modules/containers/templates"
-    mkdir -p "$1/infrastructure/modules/notifications/templates"
-    mkdir -p "$1/infrastructure/modules/security/templates"
-
-    # Create main.tf, outputs.tf, variables.tf, and versions.tf files
-    touch "$1/infrastructure/main.tf"
-    touch "$1/infrastructure/outputs.tf"
-    touch "$1/infrastructure/variables.tf"
-    touch "$1/infrastructure/provider.tf"
-    touch "$1/infrastructure/terraform.tfvars"
-
-    touch "$1/infrastructure/modules/containers/main.tf"
-    touch "$1/infrastructure/modules/containers/outputs.tf"
-    touch "$1/infrastructure/modules/containers/variables.tf"
-    touch "$1/infrastructure/modules/containers/versions.tf"
-    touch "$1/infrastructure/modules/containers/templates/app.json.tpl"
-
-    touch "$1/infrastructure/modules/instances/main.tf"
-    touch "$1/infrastructure/modules/instances/outputs.tf"
-    touch "$1/infrastructure/modules/instances/variables.tf"
-    touch "$1/infrastructure/modules/instances/versions.tf"
-
-    touch "$1/infrastructure/modules/management/main.tf"
-    touch "$1/infrastructure/modules/management/outputs.tf"
-    touch "$1/infrastructure/modules/management/variables.tf"
-    touch "$1/infrastructure/modules/management/versions.tf"
-
-    touch "$1/infrastructure/modules/network/main.tf"
-    touch "$1/infrastructure/modules/network/outputs.tf"
-    touch "$1/infrastructure/modules/network/variables.tf"
-    touch "$1/infrastructure/modules/network/versions.tf"
-
-    touch "$1/infrastructure/modules/notifications/main.tf"
-    touch "$1/infrastructure/modules/notifications/outputs.tf"
-    touch "$1/infrastructure/modules/notifications/variables.tf"
-    touch "$1/infrastructure/modules/notifications/versions.tf"
-    touch "$1/infrastructure/modules/notifications/templates/email-sns-stack.json.tpl"
-
-    touch "$1/infrastructure/modules/scaling/main.tf"
-    touch "$1/infrastructure/modules/scaling/outputs.tf"
-    touch "$1/infrastructure/modules/scaling/variables.tf"
-
-    touch "$1/infrastructure/modules/security/main.tf"
-    touch "$1/infrastructure/modules/security/outputs.tf"
-    touch "$1/infrastructure/modules/security/variables.tf"
-    touch "$1/infrastructure/modules/security/versions.tf"
-    touch "$1/infrastructure/modules/security/templates/ecs-ec2-role-policy.json.tpl"
-    touch "$1/infrastructure/modules/security/templates/ecs-ec2-role.json.tpl"
-    touch "$1/infrastructure/modules/security/templates/ecs-service-role.json.tpl"
-
-    touch "$1/infrastructure/modules/storage/main.tf"
-    touch "$1/infrastructure/modules/storage/outputs.tf"
-    touch "$1/infrastructure/modules/storage/variables.tf"
-    touch "$1/infrastructure/modules/storage/versions.tf"
-
-    # Append provider information to provider.tf
-    cat <<EOF >> "$1/infrastructure/provider.tf"
-terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 5.0"
-    }
-  }
-}
-
-# Configure the AWS Provider
-provider "aws" {
-  region                   = "us-east-1"
-  shared_config_files      = ["~/.aws/config"]
-  shared_credentials_files = ["~/.aws/credentials"]
-  profile                  = "<aws-profile>"
-}
-EOF
-
-    echo "Directory structure created successfully."
-}
-
-main() {
-    echo "Current working directory: $(pwd)"
-    read -r -p "Do you want to create a root directory? (yes[y]/no[n]): " answer
-    case "$answer" in
-        [yY]|[yY][eE][sS])
-            # Prompt the user until a valid directory name is provided
-            while true; do
-                read -r -p "Enter the root directory name (no spaces, only hyphens or underscores allowed): " root_directory_name
-                # Check if directory already exists
-                if [[ -d "$root_directory_name" ]]; then
-                    echo "Directory '$root_directory_name' already exists. Please enter a new directory name."
-                # Check if directory name contains only allowed characters
-                elif [[ ! "$root_directory_name" =~ ^[a-zA-Z0-9_-]+$ ]]; then
-                    echo "Invalid directory name. Only letters, numbers, hyphens (-), and underscores (_) are allowed."
-                else
-                    create_directory_structure "$root_directory_name"
-                    break
-                fi
-            done
-            ;;
-        [nN]|[nN][oO])
-            echo "Exiting without creating a root directory."
-            ;;
-        *)
-            echo "Invalid input. Exiting without creating a root directory."
-            ;;
-    esac
-}
-
-# Execute main function
-main
+chmod +x terraform-start.sh
 ```
-
-The script generates the following directory structure:
-
-- **Documentation**: Directory for storing documentation files.
-- **Environment**: (Optional) Directory for managing different environment setups such as development, staging, and production.
-- **Infrastructure**: Directory for housing Terraform configuration files.
-    - **Modules**: Directory for storing Terraform modules.
-        - **Containers**: Directory for container-related Terraform modules.
-        - **Instances**: Directory for instance-related Terraform modules.
-        - **Database**: Directory for database-related Terraform modules.
-        - **Management**: Directory for management-related Terraform modules.
-        - **Network**: Directory for network-related Terraform modules.
-        - **Notifications**: Directory for notification-related Terraform modules.
-        - **Scaling**: Directory for scaling-related Terraform modules.
-        - **Security**: Directory for security-related Terraform modules.
-        - **Storage**: Directory for storage-related Terraform modules.
-        - **Templates**: Directory for storing Terraform template files.
-- **Files**: Directory for storing miscellaneous files.
-
-## Directory Structure
-
-```markdown
-|-- terraform-projects
-    |-- .gitignore
-    |-- README.md
-    |-- directoryList.md
-    |-- documentation
-    |-- files
-    |   |-- two-tier-architecture.mdj
-    |-- infrastructure
-        |-- main.tf
-        |-- outputs.tf
-        |-- provider.tf
-        |-- terraform.tfvars
-        |-- variables.tf
-        |-- modules
-            |-- containers
-            |   |-- main.tf
-            |   |-- outputs.tf
-            |   |-- variables.tf
-            |   |-- versions.tf
-            |   |-- templates
-            |       |-- app.json.tpl
-            |-- database
-            |-- instances
-            |   |-- main.tf
-            |   |-- outputs.tf
-            |   |-- variables.tf
-            |   |-- versions.tf
-            |-- management
-            |   |-- main.tf
-            |   |-- outputs.tf
-            |   |-- variables.tf
-            |   |-- versions.tf
-            |-- network
-            |   |-- main.tf
-            |   |-- outputs.tf
-            |   |-- variables.tf
-            |   |-- versions.tf
-            |-- notifications
-            |   |-- main.tf
-            |   |-- outputs.tf
-            |   |-- variables.tf
-            |   |-- versions.tf
-            |   |-- templates
-            |       |-- email-sns-stack.json.tpl
-            |-- scaling
-            |   |-- main.tf
-            |   |-- outputs.tf
-            |   |-- variables.tf
-            |-- security
-            |   |-- main.tf
-            |   |-- outputs.tf
-            |   |-- variables.tf
-            |   |-- versions.tf
-            |   |-- templates
-            |       |-- ecs-ec2-role-policy.json.tpl
-            |       |-- ecs-ec2-role.json.tpl
-            |       |-- ecs-service-role.json.tpl
-            |-- storage
-                |-- main.tf
-                |-- outputs.tf
-                |-- variables.tf
-                |-- versions.tf
-```
-
-## Terraform Configuration Files
-
-For each module, the script generates the following Terraform configuration files:
-
-- **main.tf**: Main Terraform configuration file.
-- **outputs.tf**: File for defining output variables.
-- **variables.tf**: File for defining input variables.
-- **versions.tf**: File for specifying Terraform version constraints.
-
-Additionally, for certain modules, the script creates a **templates** directory for storing Terraform template files.
-
-## Provider Configuration
-
-The script appends provider configuration information to the `provider.tf` file within the **Infrastructure** directory. It configures the AWS provider with the specified region and profile.
 
 ## Usage
 
-1. Clone the Repository: Clone this repository to your local machine.
+Execute the script within the directory where you want to initialize your Terraform project:
 
 ```bash
-git clone https://github.com/ErikNgigi/terraform-environemnt-automation
+./terraform_start.sh
 ```
 
-2. Navigate to the Script: Using a terminal, navigate to the directory where the script is located.
+Follow the interactive prompts to:
 
-```bash
-cd terraform-environemnt-automation
-```
+1. Create a new directory structure for your Terraform project.
+2. Select an AWS CLI profile for your Terraform configurations.
+3. Initialize the directory with Terraform.
+4. Generate a `.gitignore` file appropriate for Terraform projects.
 
-3. Make the Script Executable: If necessary, make the script executable by running chmod +x tf-start.sh.
+## Detailed Script Functions
 
-```bash
-chmod +x tf-start.sh
-```
+### Setting Up Colors
 
-4. Run the Script: Execute the script by running ./tf-start.sh
+The script starts by defining ANSI escape codes for coloring output, enhancing the readability and user experience.
 
-```bash
-./tf-start.sh
-```
+### Checking AWS Credentials
 
-5. Follow the Prompts: The script will prompt you to create a root directory and provide a name for it. Only letters, numbers, hyphens (-), and underscores (_) are allowed in the directory name.
-6. Confirmation: Upon successful execution, the script will display a confirmation message indicating that the directory structure has been created.
+`check_credentials_file` ensures the AWS CLI is properly configured by checking for the existence of the AWS credentials file.
 
-Note: If a directory with the provided name already exists, the user is prompted to enter a new directory name.
+### Directory and File Creation
 
-Feel free to modify the script as needed to suit your specific requirements.
+`directory_structure_template` creates a comprehensive directory and file structure for a Terraform project, including directories for modules (like containers, instances, databases), and base Terraform files (`main.tf`, `outputs.tf`, etc.).
 
-## Excluding Specific Files and Folders in Git
+### AWS Profile Selection
 
-To enhance security and adhere to best practices when using Git with Terraform, it's crucial to exclude certain files and directories that contain sensitive information or are not relevant for version control. The following script demonstrates how to create a .gitignore file tailored for Terraform projects:
+`extract_profiles` and `prompt_for_profile_selection` assist in selecting an AWS CLI profile from the configured profiles, which is then integrated into the Terraform configuration to manage AWS resources.
 
-``````
-Creates Gitignore file for Terraform: tf-git.sh
-``````
+### Terraform and Git Initialization
 
-```bash
-#!/bin/bash
+The script offers options to initialize Terraform in the new project directory and to create a `.gitignore` file, ensuring that sensitive or unnecessary files are not tracked in version control.
 
-# create terraform gitignore file
-touch .gitignore
+## Script Generated File Structure
 
-# append details to the gitignore file
-cat <<EOF >> .gitignore
-# Local .terraform directories
-**/.terraform/*
+Upon execution, the script sets up a Terraform project structure with directories for documentation, infrastructure (with submodules for different components), and files necessary for Terraform and AWS configurations.
 
-# .tfstate files
-*.tfstate
-*.tfstate.*
+## Execution Flow
 
-# Crash log files
-crash.log
-crash.*.log
+- **Welcome Message**: The script begins with a greeting and a brief introduction.
+- **Directory Structure Creation**: Prompts the user to create a new Terraform project directory.
+- **AWS Profile Selection**: Allows choosing an AWS CLI profile to configure the Terraform provider.
+- **Terraform Initialization**: Offers to run `terraform init` in the new directory.
+- **`.gitignore` File Creation**: Proposes to create a `.gitignore` file tailored for Terraform projects.
 
-# Exclude all .tfvars files, which are likely to contain sensitive data, such as
-# password, private keys, and other secrets. These should not be part of version 
-# control as they are data points which are potentially sensitive and subject 
-# to change depending on the environment.
-*.tfvars
-*.tfvars.json
+### Feature Enhancements
 
-# Ignore override files as they are usually used to override resources locally and so
-# are not checked in
-override.tf
-override.tf.json
-*_override.tf
-*_override.tf.json
+- [ ] **Cross-Platform Compatibility**: Adapt the script for compatibility with other operating systems, such as macOS and Windows, ensuring a broader user base can utilize it.
+- [ ] **Cloud Provider Flexibility**: Introduce options for configuring multiple cloud providers (e.g., Azure, Google Cloud) in addition to AWS, catering to projects that span across different clouds.
+- [ ] **Interactive Menu for Terraform Versions**: Implement a feature to select different Terraform versions for initialization, allowing users to work with specific versions as per project requirements.
+- [ ] **Advanced Directory Structure Customization**: Provide users with options to customize the directory structure based on project size or type (e.g., microservices, monolith), including naming conventions.
+- [x] **Error Handling and Validation**: Enhance error handling and input validation throughout the script to minimize execution failures and guide users through correcting inputs.
 
-# Include override files you do wish to add to version control using negated pattern
-# !example_override.tf
+### Security Improvements
 
-# Include tfplan files to ignore the plan output of command: terraform plan -out=tfplan
-# example: *tfplan*
+- [x] **Sensitive Data Management**: Integrate mechanisms to securely handle sensitive data, such as secret management tools or encryption for `.tfvars` files containing sensitive information.
+- [ ] **Audit Logging**: Add functionality to log script activities, such as changes made to the filesystem and AWS CLI profile selections, aiding in troubleshooting and auditing.
 
-# Ignore CLI configuration files
-.terraformrc
-terraform.rc
-EOF
+### Usability and Documentation
 
-# output message
-echo "Terraform Gitignore Created Succesfully"
-```
+- [ ] **Help Command**: Implement a `--help` command that displays usage information, command options, and a brief description of the script’s functionality.
+- [ ] **Verbose Mode**: Add a verbose mode (`-v` flag) for detailed output during script execution, offering insights into the operations being performed.
+- [x] **Documentation Update**: Regularly update the documentation to reflect new features, usage examples, and FAQs to assist users in navigating complex scenarios.
 
-## Explanation:
+### Integration with DevOps Tools
 
-1. Local .terraform Directories: Excludes local Terraform directories that are created during initialization and execution.
-2. .tfstate Files: Ignores Terraform state files which contain sensitive information about the infrastructure managed by Terraform.
-3. Crash Log Files: Excludes crash log files generated during execution.
-4. .tfvars Files: Excludes variables files which often contain sensitive data like passwords or private keys.
-5. Override Files: Ignored as they're typically used for local resource overrides.
-6. CLI Configuration Files: Excludes Terraform CLI configuration files.
+- [ ] **CI/CD Pipeline Integration**: Provide guidelines or templates for integrating the generated Terraform project structure with popular CI/CD tools (e.g., Jenkins, GitHub Actions, GitLab CI).
+- [ ] **Version Control System Integration**: Automate the initial commit to a version control system (e.g., Git) with an option to link the repository to remote VCS providers like GitHub, GitLab, or Bitbucket.
 
-## Usage
-1. Clone the Repository: Clone this repository to your local machine.
+### Testing and Reliability
 
-```bash
-git clone https://github.com/ErikNgigi/terraform-environemnt-automation
-```
+- [ ] **Unit and Integration Tests**: Develop a suite of unit and integration tests to ensure script reliability and functionality across updates and environmental changes.
+- [ ] **Script Modularity**: Refactor the script into modular components to facilitate easier updates, maintenance, and customization by the community or individual users.
 
-2. Navigate to the Script: Using a terminal, navigate to the directory where the script is located.
+### Community and Contribution
 
-```bash
-cd terraform-environemnt-automation
-```
+- [ ] **Open Source Contribution Guidelines**: Establish clear guidelines for community contributions, including how to propose features, report issues, and submit pull requests.
+- [ ] **Localization**: Add support for multiple languages in script prompts and documentation, making the tool accessible to a global audience.
 
-3. Make the Script Executable: If necessary, make the script executable by running chmod +x tf-git.sh.
+This checklist not only aims to guide future development efforts but also encourages community involvement in enhancing and expanding the script's capabilities. By addressing these items, the Terraform Decoded script can evolve into an even more powerful and versatile tool for infrastructure management and development.
 
-```bash
-chmod +x tf-git.sh
-```
+## Conclusion
 
-4. Run the Script: Execute the script by running ./tf-git.sh
+The Terraform Decoded script is a convenient tool for quickly setting up a Terraform project with a structured directory layout, initialized Terraform environment, and integrated AWS CLI profile selection. By following the prerequisites and utilizing the script as described, developers can significantly streamline their Terraform project setup process on Linux systems.
 
-```bash
-./tf-git.sh
-```
-
-By adding these rules to your .gitignore file, you ensure that sensitive information is not inadvertently added to version control, promoting security and best practices in your Terraform projects.
+To further enhance the Terraform Decoded script and ensure it meets a wide range of development requirements, here's a possible TODO checklist. This list aims to guide future improvements and feature integrations, making the script more versatile and user-friendly.
