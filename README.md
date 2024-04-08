@@ -33,7 +33,7 @@ chmod +x terraform-start.sh
 Execute the script within the directory where you want to initialize your Terraform project:
 
 ```bash
-./terraform_start.sh
+./terraform-start.sh
 ```
 
 Follow the interactive prompts to:
