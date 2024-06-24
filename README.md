@@ -9,8 +9,6 @@ The Terraform Decoded script automates the setup of a modular and efficient Terr
 - **Terraform Initialization**: Provides an option to automatically run `terraform init`.
 - **Gitignore Initialization**: Generates a `.gitignore` file tailored for Terraform projects to exclude sensitive or unnecessary files from version control.
 
-[![terraform-decode-video](https://img.youtube.com/vi/o-m9IG4_7E8/maxresdefault.jpg)](https://youtu.be/o-m9IG4_7E8)
-
 ## Prerequisites
 
 Before running the script, ensure the following requirements are met:
@@ -24,7 +22,14 @@ Before running the script, ensure the following requirements are met:
 
 No specific installation is required for the script itself. However, make sure you have the necessary permissions to execute it:
 
+Clone from github.
 ```bash
+git clone https://github.com/erikngigi/Terraform-Environemnt-Automation.git
+```
+
+Make the shell script executable
+```bash
+cd Terraform-Environemnt-Automation
 chmod +x terraform-start.sh
 ```
 
@@ -76,6 +81,74 @@ Upon execution, the script sets up a Terraform project structure with directorie
 - **AWS Profile Selection**: Allows choosing an AWS CLI profile to configure the Terraform provider.
 - **Terraform Initialization**: Offers to run `terraform init` in the new directory.
 - **`.gitignore` File Creation**: Proposes to create a `.gitignore` file tailored for Terraform projects.
+
+## Directory Structure
+``````bash
+.
+├── main.tf
+├── modules
+│  ├── containers - (Manages containerized applications and their configurations.)
+│  │  ├── main.tf
+│  │  ├── outputs.tf
+│  │  ├── templates
+│  │  │  └── app.json.tpl
+│  │  ├── variables.tf
+│  │  └── versions.tf
+│  ├── database - (Sets up and maintains database resources like RDS or DynamoDB.)
+│  │  ├── main.tf
+│  │  ├── outputs.tf
+│  │  ├── variables.tf
+│  │  └── versions.tf
+│  ├── instances - (Provisions and configures virtual machine instances.)
+│  │  ├── main.tf
+│  │  ├── outputs.tf
+│  │  ├── templates
+│  │  │  └── extras.sh
+│  │  ├── variables.tf
+│  │  └── versions.tf
+│  ├── management - (Oversees administrative and management tools or services.)
+│  │  ├── main.tf
+│  │  ├── outputs.tf
+│  │  ├── variables.tf
+│  │  └── versions.tf
+│  ├── network - (Defines and configures networking components such as VPCs, subnets, and security groups.)
+│  │  ├── main.tf
+│  │  ├── outputs.tf
+│  │  ├── variables.tf
+│  │  └── versions.tf
+│  ├── notifications - (Handles setup for notification services and alerting mechanisms.)
+│  │  ├── main.tf
+│  │  ├── outputs.tf
+│  │  ├── templates
+│  │  │  └── email-sns-stack.json.tpl
+│  │  ├── variables.tf
+│  │  └── versions.tf
+│  ├── scaling - (Manages auto-scaling policies and resources to ensure application scalability.)
+│  │  ├── main.tf
+│  │  ├── outputs.tf
+│  │  └── variables.tf
+│  ├── security - (Implements security measures, including IAM roles, policies, and security configurations.)
+│  │  ├── main.tf
+│  │  ├── outputs.tf
+│  │  ├── templates
+│  │  │  ├── ecs-ec2-role-policy.json.tpl
+│  │  │  ├── ecs-ec2-role.json.tpl
+│  │  │  └── ecs-service-role.json.tpl
+│  │  ├── variables.tf
+│  │  └── versions.tf
+│  └── storage - (Manages storage solutions like S3 buckets, EBS volumes, and other data storage resources.)
+│     ├── main.tf
+│     ├── outputs.tf
+│     ├── variables.tf
+│     └── versions.tf
+├── outputs.tf
+├── provider.tf
+├── README.md
+├── terraform.tfstate
+├── terraform.tfstate.backup
+├── terraform.tfvars
+└── variables.tf
+``````
 
 ## To-Do List
 
