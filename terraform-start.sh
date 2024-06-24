@@ -94,6 +94,7 @@ directory_structure_template() {
 	mkdir -p "$root_directory/infrastructure/modules/storage"
 
 	# Create templates subdirectories
+  mkdir -p "$root_directory/infrastructure/modules/instances/templates"
 	mkdir -p "$root_directory/infrastructure/modules/containers/templates"
 	mkdir -p "$root_directory/infrastructure/modules/notifications/templates"
 	mkdir -p "$root_directory/infrastructure/modules/security/templates"
